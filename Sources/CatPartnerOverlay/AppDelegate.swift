@@ -6,7 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let positionKey = "windowOrigin"
 
     private var window: NSPanel!
-    private var imageView: NSImageView!
+    private var imageView: CatView!
     private var sprites: SpriteSet!
     private var statusItem: NSStatusItem!
     private var tap: CFMachPort?
@@ -41,13 +41,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         panel.backgroundColor = .clear
         panel.hasShadow = false
         panel.level = .floating
-        panel.isMovableByWindowBackground = true  // drag the cat anywhere
+        // Dragging is handled in CatView (isMovableByWindowBackground didn't work with NSImageView).
         panel.hidesOnDeactivate = false
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
 
-        imageView = NSImageView(frame: NSRect(origin: .zero, size: displaySize))
+        imageView = CatView(frame: NSRect(origin: .zero, size: displaySize))
         imageView.image = sprites.idle
-        imageView.imageScaling = .scaleProportionallyUpOrDown
         panel.contentView = imageView
 
         panel.setFrameOrigin(restoredOrigin() ?? defaultOrigin())
