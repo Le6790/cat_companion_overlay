@@ -85,4 +85,4 @@ Three 256x256 transparent PNGs: `idle.png`, `left.png`, `right.png`.
 
 ## Not yet done
 
-Stable code-signing identity (so rebuilds keep their permission), launch at login, size setting, sound, multiple skins, Windows/Linux.
+Persisted or per-day key counter, stable code-signing identity (so rebuilds keep their permission), launch at login, size setting, sound, multiple skins, Windows/Linux.

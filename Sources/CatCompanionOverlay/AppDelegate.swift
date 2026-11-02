@@ -13,6 +13,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var retryTimer: Timer?
     private var resetTimer: Timer?
     private var nextIsLeft = true
+    private let backspaceKeyCode: Int64 = 51  // kVK_Delete (the "delete" key above Return)
+    private var keyCount = 0 { didSet { imageView?.counterText = String(keyCount) } }  // net count, resets on launch
 
     private var visibilityItem: NSMenuItem!
     private var onTopItem: NSMenuItem!
@@ -79,8 +81,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func startInputMonitor() {
         // A listen-only CGEventTap needs ONLY Input Monitoring (NSEvent global monitors
-        // also required Accessibility). We never read which key was pressed, only that
-        // a key/click event occurred.
+        // also required Accessibility). The only thing read about a key is whether it is
+        // Backspace (to decrement the counter); keycodes are never stored or logged.
         if !CGPreflightListenEventAccess() { CGRequestListenEventAccess() }
         installTap()
         // Creating the tap fails until permission is granted; keep retrying so no relaunch is needed.
@@ -104,7 +106,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             case .tapDisabledByTimeout, .tapDisabledByUserInput:
                 if let tap = me.tap { CGEvent.tapEnable(tap: tap, enable: true) }  // macOS turned it off; re-enable
             case .keyDown:
-                if event.getIntegerValueField(.keyboardEventAutorepeat) == 0 { me.pawHit() }
+                let isRepeat = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
+                if event.getIntegerValueField(.keyboardEventKeycode) == me.backspaceKeyCode {
+                    me.keyCount = max(0, me.keyCount - 1)  // held Backspace keeps decrementing
+                    if !isRepeat { me.pawHit() }
+                } else if !isRepeat {
+                    me.keyCount += 1
+                    me.pawHit()
+                }
             default:
                 me.pawHit()
             }
@@ -149,6 +158,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         onTopItem = menu.addItem(withTitle: "Always on Top", action: #selector(toggleOnTop), keyEquivalent: "")
         onTopItem.state = .on
         menu.addItem(withTitle: "Reset Position", action: #selector(resetPosition), keyEquivalent: "")
+        menu.addItem(withTitle: "Reset Counter", action: #selector(resetCounter), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Open Sprites Folder", action: #selector(openSpritesFolder), keyEquivalent: "")
         menu.addItem(withTitle: "Input Monitoring Settings…", action: #selector(openPrivacySettings), keyEquivalent: "")
@@ -181,6 +191,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let on = onTopItem.state != .on
         onTopItem.state = on ? .on : .off
         window.level = on ? .floating : .normal
+    }
+
+    @objc private func resetCounter() {
+        keyCount = 0
     }
 
     @objc private func resetPosition() {
