@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Builds dist/CatPartnerOverlay.app (release, ad-hoc signed).
+# Builds dist/CatCompanionOverlay.app (release, ad-hoc signed).
 # Usage: scripts/build_app.sh
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-NAME="CatPartnerOverlay"
-BUNDLE_ID="com.kent.catpartneroverlay"
+NAME="CatCompanionOverlay"
+BUNDLE_ID="com.kent.catcompanionoverlay"
 VERSION="0.1.0"
 APP="dist/${NAME}.app"
 
@@ -24,7 +24,7 @@ cat > "$APP/Contents/Info.plist" <<EOF
 <plist version="1.0">
 <dict>
   <key>CFBundleName</key><string>${NAME}</string>
-  <key>CFBundleDisplayName</key><string>Cat Partner Overlay</string>
+  <key>CFBundleDisplayName</key><string>Cat Companion Overlay</string>
   <key>CFBundleIdentifier</key><string>${BUNDLE_ID}</string>
   <key>CFBundleExecutable</key><string>${NAME}</string>
   <key>CFBundlePackageType</key><string>APPL</string>

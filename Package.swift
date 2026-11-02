@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "CatPartnerOverlay",
+    name: "CatCompanionOverlay",
     platforms: [.macOS(.v13)],
     targets: [
         .executableTarget(
-            name: "CatPartnerOverlay",
-            path: "Sources/CatPartnerOverlay",
+            name: "CatCompanionOverlay",
+            path: "Sources/CatCompanionOverlay",
             resources: [.copy("sprites")]
         )
     ]

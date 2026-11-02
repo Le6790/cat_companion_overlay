@@ -1,12 +1,12 @@
 // Generates the placeholder cat sprites (idle/left/right) as 256x256 transparent PNGs.
 // Usage: swift tools/gen_sprites.swift [output_dir]
-// Default output: Sources/CatPartnerOverlay/sprites
+// Default output: Sources/CatCompanionOverlay/sprites
 import AppKit
 
 let size = 256
 let outDir = CommandLine.arguments.count > 1
     ? CommandLine.arguments[1]
-    : "Sources/CatPartnerOverlay/sprites"
+    : "Sources/CatCompanionOverlay/sprites"
 try? FileManager.default.createDirectory(atPath: outDir, withIntermediateDirectories: true)
 
 let fur     = NSColor(calibratedRed: 0.96, green: 0.64, blue: 0.30, alpha: 1)

@@ -1,4 +1,4 @@
-# Cat Partner Overlay
+# Cat Companion Overlay
 
 A Bongo-Cat-style desktop overlay for macOS. A small cat floats above your windows and
 slaps the desk whenever you type or click, anywhere on the system.
@@ -10,27 +10,27 @@ slaps the desk whenever you type or click, anywhere on the system.
 
 ```bash
 swift run                      # debug build; or
-swift build -c release && .build/release/CatPartnerOverlay
+swift build -c release && .build/release/CatCompanionOverlay
 ```
 
 ### Packaged app (recommended)
 
 ```bash
-scripts/build_app.sh          # -> dist/CatPartnerOverlay.app (bundle id com.kent.catpartneroverlay)
-open dist/CatPartnerOverlay.app
+scripts/build_app.sh          # -> dist/CatCompanionOverlay.app (bundle id com.kent.catcompanionoverlay)
+open dist/CatCompanionOverlay.app
 ```
 
-Grant **Input Monitoring** to *Cat Partner Overlay* itself, not to your terminal. The app needs
+Grant **Input Monitoring** to *Cat Companion Overlay* itself, not to your terminal. The app needs
 **only Input Monitoring**; Accessibility is not required and should stay off.
 The app is ad-hoc signed, so macOS may treat a rebuilt binary as new and re-ask for permission.
 If the paw menu says "Clicks only" (clicks on the cat register, typing and outside clicks do not), the
 grant is stale. Fix:
 
 ```bash
-pkill CatPartnerOverlay
-tccutil reset ListenEvent com.kent.catpartneroverlay
+pkill CatCompanionOverlay
+tccutil reset ListenEvent com.kent.catcompanionoverlay
 # delete any leftover row in System Settings > Input Monitoring, then:
-open dist/CatPartnerOverlay.app    # accept the prompt, or add the app with +
+open dist/CatCompanionOverlay.app    # accept the prompt, or add the app with +
 ```
 
 Always launch with `open`; running the binary inside the bundle from a terminal makes the terminal the
@@ -57,16 +57,16 @@ Hide/Show Cat · Always on Top · Reset Position · Open Sprites Folder · Input
 
 Three 256x256 transparent PNGs: `idle.png`, `left.png`, `right.png`.
 
-- Bundled placeholders: `Sources/CatPartnerOverlay/sprites/`, regenerated with
+- Bundled placeholders: `Sources/CatCompanionOverlay/sprites/`, regenerated with
   `swift tools/gen_sprites.swift` (drawn with Core Graphics, so no copyrighted art).
-- Override: put all three files in `~/Library/Application Support/CatPartnerOverlay/sprites/`
+- Override: put all three files in `~/Library/Application Support/CatCompanionOverlay/sprites/`
   (menu → Open Sprites Folder). A partial set is ignored and the bundled set is used.
 
 ## Layout
 
 | Path | Purpose |
 |---|---|
-| `Sources/CatPartnerOverlay/main.swift` | Entry point, sets accessory activation policy |
+| `Sources/CatCompanionOverlay/main.swift` | Entry point, sets accessory activation policy |
 | `.../AppDelegate.swift` | Overlay window, global input monitor, menu bar |
 | `.../SpriteSet.swift` | Loads the 3 frames (user folder, then bundle) |
 | `tools/gen_sprites.swift` | Placeholder sprite generator |

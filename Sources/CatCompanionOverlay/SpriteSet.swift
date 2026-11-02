@@ -9,11 +9,11 @@ struct SpriteSet {
 
     static let names = ["idle", "left", "right"]
 
-    /// ~/Library/Application Support/CatPartnerOverlay/sprites
+    /// ~/Library/Application Support/CatCompanionOverlay/sprites
     static var userFolder: URL {
         FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("CatPartnerOverlay/sprites", isDirectory: true)
+            .appendingPathComponent("CatCompanionOverlay/sprites", isDirectory: true)
     }
 
     static func load() -> SpriteSet? {
