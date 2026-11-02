@@ -23,7 +23,20 @@ open dist/CatPartnerOverlay.app
 Grant **Input Monitoring** to *Cat Partner Overlay* itself, not to your terminal. The app needs
 **only Input Monitoring**; Accessibility is not required and should stay off.
 The app is ad-hoc signed, so macOS may treat a rebuilt binary as new and re-ask for permission.
-If so, toggle the entry off/on or remove and re-add it. A stable self-signed certificate would fix this.
+If the paw menu says "Clicks only" (clicks on the cat register, typing and outside clicks do not), the
+grant is stale. Fix:
+
+```bash
+pkill CatPartnerOverlay
+tccutil reset ListenEvent com.kent.catpartneroverlay
+# delete any leftover row in System Settings > Input Monitoring, then:
+open dist/CatPartnerOverlay.app    # accept the prompt, or add the app with +
+```
+
+Always launch with `open`; running the binary inside the bundle from a terminal makes the terminal the
+permission holder. A stable self-signed certificate would stop rebuilds from invalidating the grant.
+
+Menu status line: `Typing: listening ✓` (working), `Clicks only…` (grant not effective), `Not listening` (no tap).
 
 ### Permission (required once; applies to `swift run` only)
 

@@ -160,9 +160,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
-        permissionItem.title = tap != nil
-            ? "Typing: listening ✓"
-            : "⚠️ Typing blocked: grant Input Monitoring to this app"
+        // A tap can exist without Input Monitoring (it then only delivers mouse events),
+        // so report the permission state itself, not just whether the tap was created.
+        let granted = CGPreflightListenEventAccess()
+        switch (tap != nil, granted) {
+        case (true, true):  permissionItem.title = "Typing: listening ✓"
+        case (true, false): permissionItem.title = "⚠️ Clicks only: Input Monitoring not active for this build"
+        default:            permissionItem.title = "⚠️ Not listening: grant Input Monitoring"
+        }
     }
 
     @objc private func toggleVisible() {
