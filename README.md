@@ -3,6 +3,8 @@
 A Bongo-Cat-style desktop overlay for macOS. A small cat floats above your windows and
 slaps the desk whenever you type or click, anywhere on the system.
 
+> **Windows 11:** a Python/PySide6 port lives in [`windows/`](windows/README.md) and shares this app's sprites.
+
 - Swift 6.2 / AppKit, no third-party dependencies. macOS 13+.
 - Menu bar only (no Dock icon). Drag the cat anywhere; position is remembered.
 
