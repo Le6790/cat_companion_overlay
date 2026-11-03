@@ -4,10 +4,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let displaySize = NSSize(width: 160, height: 160)
     private let pawHold: TimeInterval = 0.12  // how long a paw stays down per input
     private let positionKey = "windowOrigin"
+    private let skinKey = "skin"
 
     private var window: NSPanel!
     private var imageView: CatView!
     private var sprites: SpriteSet!
+    private var skinID = ""
+    private var skinItems: [NSMenuItem] = []
+    private var customSkinItem: NSMenuItem!
     private var statusItem: NSStatusItem!
     private var tap: CFMachPort?
     private var retryTimer: Timer?
@@ -21,12 +25,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var permissionItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        guard let set = SpriteSet.load() else {
+        guard let initial = SpriteSet.loadInitial(savedID: UserDefaults.standard.string(forKey: skinKey)) else {
             NSLog("No sprites found. Run: swift tools/gen_sprites.swift")
             NSApp.terminate(nil)
             return
         }
-        sprites = set
+        sprites = initial.set
+        skinID = initial.id
         buildWindow()
         buildMenu()
         startInputMonitor()
@@ -154,6 +159,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.delegate = self
         permissionItem = menu.addItem(withTitle: "", action: nil, keyEquivalent: "")
         menu.addItem(.separator())
+        let skinMenu = NSMenu()
+        for skin in SpriteSet.bundledSkins { skinMenu.addItem(makeSkinItem(id: skin.id, title: skin.title)) }
+        customSkinItem = makeSkinItem(id: SpriteSet.customID, title: "Custom (sprites folder)")
+        skinMenu.addItem(customSkinItem)
+        menu.addItem(withTitle: "Cat", action: nil, keyEquivalent: "").submenu = skinMenu
+        updateSkinChecks()
         visibilityItem = menu.addItem(withTitle: "Hide Cat", action: #selector(toggleVisible), keyEquivalent: "")
         onTopItem = menu.addItem(withTitle: "Always on Top", action: #selector(toggleOnTop), keyEquivalent: "")
         onTopItem.state = .on
@@ -169,6 +180,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
+        customSkinItem.isHidden = !SpriteSet.hasCustom  // only offered while a complete set is in the folder
+        updateSkinChecks()
         // A tap can exist without Input Monitoring (it then only delivers mouse events),
         // so report the permission state itself, not just whether the tap was created.
         let granted = CGPreflightListenEventAccess()
@@ -177,6 +190,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         case (true, false): permissionItem.title = "⚠️ Clicks only: Input Monitoring not active for this build"
         default:            permissionItem.title = "⚠️ Not listening: grant Input Monitoring"
         }
+    }
+
+    private func makeSkinItem(id: String, title: String) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: #selector(selectSkin(_:)), keyEquivalent: "")
+        item.target = self
+        item.representedObject = id
+        skinItems.append(item)
+        return item
+    }
+
+    private func updateSkinChecks() {
+        for item in skinItems { item.state = (item.representedObject as? String) == skinID ? .on : .off }
+    }
+
+    @objc private func selectSkin(_ item: NSMenuItem) {
+        guard let id = item.representedObject as? String, let set = SpriteSet.load(id: id) else {
+            NSLog("Could not load skin \(item.representedObject as? String ?? "?")")
+            return
+        }
+        sprites = set
+        skinID = id
+        imageView.image = set.idle  // paw timer reads self.sprites, so later frames follow too
+        UserDefaults.standard.set(id, forKey: skinKey)
+        updateSkinChecks()
     }
 
     @objc private func toggleVisible() {

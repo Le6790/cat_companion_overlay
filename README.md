@@ -59,8 +59,11 @@ Three 256x256 transparent PNGs: `idle.png`, `left.png`, `right.png`.
 
 - Bundled placeholders: `Sources/CatCompanionOverlay/sprites/`, regenerated with
   `swift tools/gen_sprites.swift` (drawn with Core Graphics, so no copyrighted art).
-- Override: put all three files in `~/Library/Application Support/CatCompanionOverlay/sprites/`
-  (menu → Open Sprites Folder). A partial set is ignored and the bundled set is used.
+- Skins: `sprites/` (orange), `sprites/gray_tabby/`, `sprites/tortie/`, `sprites/calico/`. Pick one from the menu bar:
+  **Cat** submenu (checkmark = current). Switches instantly and is remembered (UserDefaults key `skin`).
+- Custom: put all three files in `~/Library/Application Support/CatCompanionOverlay/sprites/`
+  (menu → Open Sprites Folder). A **Custom (sprites folder)** entry then appears in the Cat submenu, and is chosen
+  at startup if you have never picked a skin. A partial set is ignored.
 
 ## Layout
 
@@ -85,4 +88,4 @@ Three 256x256 transparent PNGs: `idle.png`, `left.png`, `right.png`.
 
 ## Not yet done
 
-Persisted or per-day key counter, stable code-signing identity (so rebuilds keep their permission), launch at login, size setting, sound, multiple skins, Windows/Linux.
+Persisted or per-day key counter, stable code-signing identity (so rebuilds keep their permission), launch at login, size setting, sound, Windows/Linux.
